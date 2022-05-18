@@ -125,22 +125,31 @@ void SystemManager::AddSystemImpl(
   // Add component
   if (this->entityCompMgr && kNullEntity != _system.parentEntity)
   {
-    msgs::Plugin_V systemInfoMsg;
+    sdf::Plugins systemInfo;
     auto systemInfoComp =
         this->entityCompMgr->Component<components::SystemPluginInfo>(
         _system.parentEntity);
     if (systemInfoComp)
     {
-      systemInfoMsg = systemInfoComp->Data();
+      systemInfo = systemInfoComp->Data();
     }
     if (_sdf)
     {
-      auto pluginMsg = systemInfoMsg.add_plugins();
-      pluginMsg->CopyFrom(convert<msgs::Plugin>(*_sdf.get()));
+      sdf::Plugin plugin;
+      auto errors = plugin.Load(_sdf->Clone());
+      if (!errors.empty())
+      {
+        for (auto &err : errors)
+          ignerr << err << "\n";
+      }
+      else
+      {
+        systemInfo.push_back(plugin);
+      }
     }
 
     this->entityCompMgr->SetComponentData<components::SystemPluginInfo>(
-        _system.parentEntity, systemInfoMsg);
+        _system.parentEntity, systemInfo);
     this->entityCompMgr->SetChanged(_system.parentEntity,
         components::SystemPluginInfo::typeId);
   }

@@ -243,16 +243,20 @@ TEST(SystemManager, AddSystemWithInfo)
         if (nullptr == _systemInfoComp)
           return true;
 
-        auto pluginsMsg = _systemInfoComp->Data();
-        EXPECT_EQ(1, pluginsMsg.plugins().size());
-        if (1u != pluginsMsg.plugins().size())
+        auto plugins = _systemInfoComp->Data();
+        EXPECT_EQ(1, plugins.size());
+        if (1u != plugins.size())
           return true;
 
-        auto pluginMsg = pluginsMsg.plugins(0);
-        EXPECT_EQ("plum", pluginMsg.filename());
-        EXPECT_EQ("peach", pluginMsg.name());
-        EXPECT_NE(pluginMsg.innerxml().find("<avocado>0.5</avocado>"),
-            std::string::npos);
+        auto plugin = plugins[0];
+        EXPECT_EQ("plum", plugin.Filename());
+        EXPECT_EQ("peach", plugin.Name());
+        EXPECT_EQ(1, plugin.Contents().size());
+        if (1u != plugin.Contents().size())
+          return true;
+
+        EXPECT_EQ("avocado", plugin.Contents()[0]->GetName());
+        EXPECT_DOUBLE_EQ(0.5, plugin.Contents()[0]->Get<double>());
 
         entityCount++;
         return true;

@@ -47,21 +47,27 @@ void SystemPluginInfo::UpdateView(const EntityComponentManager &_ecm,
   if (nullptr == _item || nullptr == comp)
     return;
 
-  auto msg = comp->Data();
+  auto plugins = comp->Data();
 
   _item->setData(QString("SystemPluginInfo"),
       ComponentsModel::RoleNames().key("dataType"));
 
   QList<QVariant> pluginList;
-  for (int i = 0; i < msg.plugins().size(); ++i)
+  for (const auto &plugin : plugins)
   {
     QList<QVariant> dataList;
     dataList.push_back(
-        QVariant(QString::fromStdString(msg.plugins(i).name())));
+        QVariant(QString::fromStdString(plugin.Name())));
     dataList.push_back(
-        QVariant(QString::fromStdString(msg.plugins(i).filename())));
-    dataList.push_back(
-        QVariant(QString::fromStdString(msg.plugins(i).innerxml())));
+        QVariant(QString::fromStdString(plugin.Filename())));
+
+    std::string innerXml;
+    for (const auto & content : plugin.Contents())
+    {
+      innerXml += content->ToString("");
+    }
+
+    dataList.push_back(QVariant(QString::fromStdString(innerXml)));
     pluginList.push_back(dataList);
   }
 

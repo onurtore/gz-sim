@@ -81,6 +81,7 @@
 #include "ignition/gazebo/components/Sensor.hh"
 #include "ignition/gazebo/components/SourceFilePath.hh"
 #include "ignition/gazebo/components/Static.hh"
+#include "ignition/gazebo/components/SystemPluginInfo.hh"
 #include "ignition/gazebo/components/TemperatureRange.hh"
 #include "ignition/gazebo/components/ThreadPitch.hh"
 #include "ignition/gazebo/components/Visual.hh"
@@ -1559,6 +1560,63 @@ TEST_F(ComponentsTest, Static)
   EXPECT_TRUE(comp11 != comp2);
   EXPECT_FALSE(comp11 == comp2);
   EXPECT_FALSE(comp11 != comp12);
+}
+
+/////////////////////////////////////////////////
+TEST_F(ComponentsTest, SystemPluginInfo)
+{
+  auto generatePlugin = [](const std::string &_name,
+      const std::string &_filename, const std::string &_content)
+  {
+    sdf::Plugin plugin;
+    plugin.SetName(_name);
+    plugin.SetFilename(_filename);
+    sdf::ElementPtr content(new sdf::Element);
+    content->SetName(_content);
+    plugin.InsertContent(content);
+    return plugin;
+  };
+
+  sdf::Plugins data1;
+  data1.push_back(generatePlugin("banana", "pear", "tomato"));
+  data1.push_back(generatePlugin("cherry", "peach", "melon"));
+
+  sdf::Plugins data2;
+  data2.push_back(generatePlugin("apricot", "jackfruit", "grape"));
+  data2.push_back(generatePlugin("watermelon", "kiwi", "blueberry"));
+
+
+  // Create components
+  auto comp11 = components::SystemPluginInfo(data1);
+  auto comp12 = components::SystemPluginInfo(data1);
+  auto comp2 = components::SystemPluginInfo(data2);
+
+  // Equality operators
+  EXPECT_EQ(comp11, comp12);
+  EXPECT_NE(comp11, comp2);
+  EXPECT_TRUE(comp11 == comp12);
+  EXPECT_TRUE(comp11 != comp2);
+  EXPECT_FALSE(comp11 == comp2);
+  EXPECT_FALSE(comp11 != comp12);
+
+  // Stream operator
+  std::ostringstream ostr;
+  comp11.Serialize(ostr);
+  std::istringstream istr(ostr.str());
+  components::SystemPluginInfo comp3;
+  comp3.Deserialize(istr);
+
+  ASSERT_EQ(2u, comp3.Data().size());
+
+  EXPECT_EQ("banana", comp3.Data()[0].Name());
+  EXPECT_EQ("pear", comp3.Data()[0].Filename());
+  ASSERT_EQ(1u, comp3.Data()[0].Contents().size());
+  EXPECT_EQ("tomato", comp3.Data()[0].Contents()[0]->GetName());
+
+  EXPECT_EQ("cherry", comp3.Data()[1].Name());
+  EXPECT_EQ("peach", comp3.Data()[1].Filename());
+  ASSERT_EQ(1u, comp3.Data()[1].Contents().size());
+  EXPECT_EQ("melon", comp3.Data()[1].Contents()[0]->GetName());
 }
 
 /////////////////////////////////////////////////
