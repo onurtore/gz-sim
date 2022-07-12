@@ -302,6 +302,9 @@ class gz::sim::ServerConfigPrivate
   /// \brief is the headless mode active.
   public: bool isHeadlessRendering{false};
 
+  /// \brief is assimp used.
+  public: bool useAssimp{false};
+
   /// \brief Optional SDF root object.
   public: std::optional<sdf::Root> sdfRoot;
 
