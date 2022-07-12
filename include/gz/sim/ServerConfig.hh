@@ -347,6 +347,10 @@ namespace gz
       /// \param[in] _physicsEngine File containing physics engine library.
       public: void SetPhysicsEngine(const std::string &_physicsEngine);
 
+      /// \brief Set the assimp mode
+      /// \param[in] _headless Set to true to utilize assimp to load meshes.
+      public: void SetMeshLoader(const bool _useAssimp);
+
       /// \brief Render engine plugin library to load.
       /// \return File containing render engine library.
       public: const std::string &RenderEngineServer() const;
