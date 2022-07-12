@@ -584,6 +584,12 @@ void ServerConfig::SetRenderEngineGui(const std::string &_engine)
 }
 
 /////////////////////////////////////////////////
+void ServerConfig::SetMeshLoader(const bool _useAssimp)
+{
+  return this->dataPtr->useAssimp = _useAssimp;
+}
+
+/////////////////////////////////////////////////
 void ServerConfig::AddPlugin(const ServerConfig::PluginInfo &_info)
 {
   this->dataPtr->plugins.push_back(_info);
