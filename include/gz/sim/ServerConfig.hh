@@ -351,6 +351,9 @@ namespace gz
       /// \param[in] _headless Set to true to utilize assimp to load meshes.
       public: void SetMeshLoader(const bool _useAssimp);
 
+      /// \brief Get the assimp mode
+      public: bool MeshLoader() const;
+
       /// \brief Render engine plugin library to load.
       /// \return File containing render engine library.
       public: const std::string &RenderEngineServer() const;

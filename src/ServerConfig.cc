@@ -237,7 +237,7 @@ class gz::sim::ServerConfigPrivate
             networkSecondaries(_cfg->networkSecondaries),
             seed(_cfg->seed),
             logRecordTopics(_cfg->logRecordTopics),
-            isHeadlessRendering(_cfg->isHeadlessRendering)
+            isHeadlessRendering(_cfg->isHeadlessRendering),
             useAssimp(_cfg->useAssimp) { }
 
   // \brief The SDF file that the server should load
@@ -590,7 +590,12 @@ void ServerConfig::SetRenderEngineGui(const std::string &_engine)
 /////////////////////////////////////////////////
 void ServerConfig::SetMeshLoader(const bool _useAssimp)
 {
-  return this->dataPtr->useAssimp = _useAssimp;
+  this->dataPtr->useAssimp = _useAssimp;
+}
+
+bool ServerConfig::MeshLoader() const
+{
+  return this->dataPtr->useAssimp;
 }
 
 /////////////////////////////////////////////////

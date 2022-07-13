@@ -21,6 +21,7 @@
 
 #include <sdf/Root.hh>
 
+#include <gz/common/MeshManager.hh>
 #include "gz/common/Profiler.hh"
 #include "gz/sim/components/Model.hh"
 #include "gz/sim/components/Name.hh"
@@ -68,6 +69,9 @@ SimulationRunner::SimulationRunner(const sdf::World *_world,
   {
     physics = _world->PhysicsDefault();
   }
+
+  auto &meshManager = *gz::common::MeshManager::Instance();
+  meshManager.useAssimp = _config.MeshLoader();
 
   // Step size
   auto dur = std::chrono::duration<double>(physics->MaxStepSize());
